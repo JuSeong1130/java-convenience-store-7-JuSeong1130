@@ -46,4 +46,24 @@ class CommandTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    @Test
+    @DisplayName("Yes인지 판단 시 YES(Enum)라면 True")
+    void isYes_True() {
+        //give
+        Command command = Command.YES;
+
+        //when//then
+        Assertions.assertThat(command.isYes()).isTrue();
+    }
+
+    @Test
+    @DisplayName("Yes인지 판단 시 NO(Enum)라면 False")
+    void isYes_False() {
+        //give
+        Command command = Command.NO;
+
+        //when//then
+        Assertions.assertThat(command.isYes()).isFalse();
+    }
+
 }
