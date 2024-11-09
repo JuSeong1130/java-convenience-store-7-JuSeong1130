@@ -159,8 +159,8 @@ name,buy,get,start_date,end_date
 
 
 ### Command(Enum)
-y true
-n false
+- [x] Command 찾는 기능
+- [ ] Y인지 N인지 판단하는 기능
 
 
 ## 고민한 점
