@@ -21,4 +21,8 @@ public enum Command {
                 .orElseThrow(() -> new IllegalArgumentException("Command not found"));
     }
 
+    public boolean isYes() {
+        return flag;
+    }
+
 }
