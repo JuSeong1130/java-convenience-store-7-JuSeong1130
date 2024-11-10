@@ -15,8 +15,9 @@ public class InputView {
 
 
     private static final String ASK_PRODUCT_AND_QUANTITY = "구매하실 상품명과 수량을 입력해 주세요. (예: [사이다-2],[감자칩-1])";
+    private static final String ASK_MEMBERSHIP_DISCOUNT_MESSAGE = "멤버십 할인을 받으시겠습니까? (Y/N)";
 
-    public RequestOrder readItem() {
+    public RequestOrder askItem() {
         System.out.println(ASK_PRODUCT_AND_QUANTITY);
         String input = readLine();
         String fullPattern = "\\[([가-힣]+)-([0-9]+)\\](,\\[([가-힣]+)-([0-9]+)\\])*";
@@ -36,6 +37,11 @@ public class InputView {
             orderProducts.add(new RequestOrderProduct(name, quantity));
         }
         return new RequestOrder(orderProducts);
+    }
+
+    public String askMemberShipDiscount() {
+        System.out.println(ASK_MEMBERSHIP_DISCOUNT_MESSAGE);
+        return readLine();
     }
 
 
