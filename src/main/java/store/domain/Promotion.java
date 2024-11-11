@@ -31,4 +31,8 @@ public class Promotion {
         return get;
     }
 
+    public boolean isInRange(LocalDateTime date) {
+        return startDate.isBefore(date) && endDate.isAfter(date);
+    }
+
 }
