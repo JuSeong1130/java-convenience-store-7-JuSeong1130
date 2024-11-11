@@ -99,4 +99,16 @@ public class Product {
         return new ApplyResult(0, quantity, 0, 0);
     }
 
+    public int decreasePromotionQuantity(int quantity) {
+        int minQuantity = Math.min(this.promotionQuantity, quantity);
+        this.promotionQuantity -= minQuantity;
+        return minQuantity;
+    }
+
+    public int decreaseCommonQuantity(int quantity) {
+        int minQuantity = Math.min(this.commonQuantity, quantity);
+        this.commonQuantity -= minQuantity;
+        return minQuantity;
+    }
+
 }
