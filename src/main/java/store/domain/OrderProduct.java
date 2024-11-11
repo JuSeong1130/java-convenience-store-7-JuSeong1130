@@ -65,4 +65,27 @@ public class OrderProduct {
         this.pendingQuantity = 0;
     }
 
+    public boolean hasGift() {
+        return getGiftCount() > 0;
+    }
+
+    public int getGiftCount() {
+        return product.calculateGiftCount(promotionQuantity);
+    }
+
+    public int getTotal() {
+        return product.getPrice() * (promotionQuantity + commonQuantity);
+    }
+
+    public int getPromotionAmount() {
+        return product.getPrice() * promotionQuantity;
+    }
+
+    public int getPromotionDiscount() {
+        return getGiftCount() * product.getPrice();
+    }
+
+    public int getCount() {
+        return promotionQuantity + commonQuantity;
+    }
 }
