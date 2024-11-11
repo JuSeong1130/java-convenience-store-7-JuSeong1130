@@ -25,4 +25,8 @@ public enum Command {
         return flag;
     }
 
+    public boolean isNo() {
+        return !flag;
+    }
+
 }
