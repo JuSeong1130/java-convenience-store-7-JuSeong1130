@@ -8,6 +8,7 @@ import store.repository.OrderRepository;
 import store.repository.ProductRepository;
 import store.view.dto.RequestOrder;
 import store.view.dto.RequestOrderProduct;
+import store.view.dto.ResponseOrder;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -93,5 +94,11 @@ public class OrderService {
         if (command.isYes()) {
             order.activeMembership();
         }
+    }
+
+    public ResponseOrder getOrderReceipt() {
+        Order order = orderRepository.find().get();
+        OrderReceipt receipt = order.getReceipt();
+        return ResponseOrder.from(receipt);
     }
 }
