@@ -25,4 +25,44 @@ public class OrderProduct {
     public String getName() {
         return product.getName();
     }
+
+    public void solvePending(Command command) {
+        if(command.isYes()) {
+            handleYesCommand();
+        }
+        if(command.isNo() && orderProductState == OrderProductState.GIFT) {
+            product.decreaseCommonQuantity(pendingQuantity);
+            this.commonQuantity += pendingQuantity;
+        }
+        this.orderProductState = OrderProductState.SOLVE;
+        this.pendingQuantity = 0;
+    }
+
+    private void handleYesCommand() {
+        if (orderProductState == OrderProductState.GIFT) {
+            applyGiftQuantity();
+        } else if (orderProductState == OrderProductState.EXCLUSION) {
+            applyExclusionQuantity();
+        }
+    }
+
+    private void applyGiftQuantity() {
+        product.decreasePromotionQuantity(pendingQuantity + giftQuantity);
+        this.promotionQuantity += pendingQuantity + giftQuantity;
+        resetQuantities();
+    }
+
+    private void resetQuantities() {
+        this.pendingQuantity = 0;
+        this.giftQuantity = 0;
+    }
+
+    private void applyExclusionQuantity() {
+        int remainingQuantity = pendingQuantity;
+        remainingQuantity -= product.decreasePromotionQuantity(pendingQuantity);
+        product.decreaseCommonQuantity(remainingQuantity);
+        this.commonQuantity += pendingQuantity;
+        this.pendingQuantity = 0;
+    }
+
 }
