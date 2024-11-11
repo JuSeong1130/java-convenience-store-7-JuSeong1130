@@ -111,4 +111,10 @@ public class Product {
         return minQuantity;
     }
 
+    public int calculateGiftCount(int promotionQuantity) {
+        if(promotionQuantity == 0) return 0;
+        int promotionTotalCount = promotion.getBuy() + promotion.getGet(); // 프로모션 총 개수
+        int count = promotionQuantity / promotionTotalCount;
+        return count * promotion.getGet();
+    }
 }
