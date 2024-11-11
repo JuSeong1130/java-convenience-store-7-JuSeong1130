@@ -1,7 +1,17 @@
 package store.service;
 
+import camp.nextstep.edu.missionutils.DateTimes;
+import store.controller.dto.OrderStateDTO;
+import store.controller.dto.StateContextDTO;
+import store.domain.*;
 import store.repository.OrderRepository;
 import store.repository.ProductRepository;
+import store.view.dto.RequestOrder;
+import store.view.dto.RequestOrderProduct;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OrderService {
 
@@ -12,4 +22,61 @@ public class OrderService {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
     }
+
+    public OrderStateDTO createOrder(RequestOrder requestOrder) {
+        List<OrderProduct> orderProducts = new ArrayList<>();
+        List<StateContextDTO> stateContexts = new ArrayList<>();
+        OrderState orderState = OrderState.SUCCESS;
+        LocalDateTime now = DateTimes.now();
+        for (RequestOrderProduct requestOrderProduct : requestOrder.orderProducts()) {
+            Product product = productRepository.findByName(requestOrderProduct.name());
+            ApplyResult applyResult = product.applyResult(requestOrderProduct.quantity(), now);
+            OrderProduct orderProduct = createOrderProduct(product, applyResult, now);
+            OrderProductState orderProductState = orderProduct.getState();
+            orderState = calcaulteOrderState(orderProductState);
+            orderProducts.add(orderProduct);
+            stateContexts.add(new StateContextDTO(orderProductState.getState(), product.getName(), getQuantity(applyResult, orderProductState)));
+        }
+        Order order = new Order(orderProducts, orderState);
+        orderRepository.save(order);
+        return new OrderStateDTO(orderState.getState(), stateContexts);
+    }
+
+    private OrderProduct createOrderProduct(Product product, ApplyResult applyResult,  LocalDateTime now) {
+        OrderProductState orderProductState = getOrderProductState(applyResult);
+
+        return new OrderProduct(
+                product,
+                applyResult.promotionQuantity(),
+                applyResult.commonQuantity(),
+                applyResult.pendingQuantity(),
+                applyResult.giftQuantity(),
+                orderProductState
+        );
+    }
+
+    private OrderProductState getOrderProductState(ApplyResult applyResult) {
+        if(applyResult.pendingQuantity() == 0) {
+            return OrderProductState.SOLVE;
+        }
+        if(applyResult.giftQuantity() == 0) {
+            return OrderProductState.EXCLUSION;
+        }
+        return OrderProductState.GIFT;
+    }
+
+    private int getQuantity(ApplyResult applyResult, OrderProductState orderProductState) {
+        if(orderProductState == OrderProductState.GIFT) {
+            return applyResult.giftQuantity();
+        }
+        return applyResult.pendingQuantity();
+    }
+
+    private OrderState calcaulteOrderState(OrderProductState orderProductState) {
+        if(orderProductState == OrderProductState.SOLVE) {
+            return OrderState.SUCCESS;
+        }
+        return OrderState.PENDING;
+    }
+
 }
