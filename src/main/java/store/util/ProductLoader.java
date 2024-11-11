@@ -15,6 +15,49 @@ public class ProductLoader {
 
     public static  List<Product> loadProducts() {
         Map<String, Promotion> promotions = PromotionLoader.loadPromotion();
+        Map<String, List<String[]>> groupedLines = getGroups();
+        return getProducts(groupedLines, promotions);
+    }
+
+    private static List<Product> getProducts(Map<String, List<String[]>> groupedLines, Map<String, Promotion> promotions) {
+        List<Product> products = new ArrayList<>();
+
+        for (Map.Entry<String, List<String[]>> entry : groupedLines.entrySet()) {
+            String name = entry.getKey();
+            Product product = createProduct(name, entry.getValue(), promotions);
+            products.add(product);
+        }
+
+        return products;
+    }
+
+    private static Product createProduct(String name, List<String[]> valuesList, Map<String, Promotion> promotions) {
+        int price = 0;
+        int promotionQuantity = 0;
+        int commonQuantity = 0;
+        Promotion promotion = null;
+
+        for (String[] values : valuesList) {
+            price = Integer.parseInt(values[1]);
+            int quantity = Integer.parseInt(values[2]);
+            String promotionName = values[3];
+
+            if ("null".equals(promotionName)) {
+                commonQuantity += quantity;
+            } else {
+                promotionQuantity += quantity;
+                promotion = promotions.getOrDefault(promotionName, createDefaultPromotion());
+            }
+        }
+
+        return new Product(name, price, promotionQuantity, commonQuantity, promotion);
+    }
+
+    private static Promotion createDefaultPromotion() {
+        return new Promotion("", Integer.MAX_VALUE, 0, LocalDateTime.MIN, LocalDateTime.MIN);
+    }
+
+    private static Map<String, List<String[]>> getGroups() {
         Map<String, List<String[]>> groupedLines = new HashMap<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(FILE_PATH))) {
@@ -28,30 +71,7 @@ public class ProductLoader {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        List<Product> products = new ArrayList<>();
-        for (Map.Entry<String, List<String[]>> entry : groupedLines.entrySet()) {
-            String name = entry.getKey();
-            int price = 0;
-            int promotionQuantity = 0;
-            int commonQuantity = 0;
-            Promotion promotion = new Promotion("",Integer.MAX_VALUE,0, LocalDateTime.MIN, LocalDateTime.MIN);
-
-            for (String[] values : entry.getValue()) {
-                price = Integer.parseInt(values[1]);
-                int quantity = Integer.parseInt(values[2]);
-                String promotionName = values[3];
-
-                if ("null".equals(promotionName)) {
-                    commonQuantity += quantity;
-                } else {
-                    promotionQuantity += quantity;
-                    promotion = promotions.get(promotionName);
-                }
-            }
-            products.add(new Product(name, price, promotionQuantity, commonQuantity, promotion));
-        }
-
-        return products;
+        return groupedLines;
     }
 
 }
