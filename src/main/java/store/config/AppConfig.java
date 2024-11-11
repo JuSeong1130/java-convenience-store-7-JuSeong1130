@@ -14,12 +14,14 @@ import java.util.List;
 
 public class AppConfig {
 
+    private static final ProductRepository productRepository = new ProductRepository(getProduct());
+
     private static ProductService getProductService() {
         return new ProductService(getProductRepository());
     }
 
     private static ProductRepository getProductRepository() {
-        return new ProductRepository(getProduct());
+        return productRepository;
     }
 
     private static List<Product> getProduct() {
