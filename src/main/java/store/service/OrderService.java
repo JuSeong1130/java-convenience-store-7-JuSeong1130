@@ -12,6 +12,7 @@ import store.view.dto.RequestOrderProduct;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class OrderService {
 
@@ -79,4 +80,18 @@ public class OrderService {
         return OrderState.PENDING;
     }
 
+    public void solvePending(Command command, String name) {
+        Optional<Order> order = orderRepository.find();
+        if (order.isEmpty()) {
+            throw new IllegalStateException("Order not found");
+        }
+        order.get().solvePending(name, command);
+    }
+
+    public void determinedMembership(Command command) {
+        Order order = orderRepository.find().get();
+        if (command.isYes()) {
+            order.activeMembership();
+        }
+    }
 }
