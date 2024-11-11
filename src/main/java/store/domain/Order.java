@@ -21,4 +21,8 @@ public class Order {
         orderProduct.solvePending(command);
     }
 
+    public void activeMembership() {
+        this.hasMembershipDiscount = true;
+        this.orderState = OrderState.SUCCESS;
+    }
 }
