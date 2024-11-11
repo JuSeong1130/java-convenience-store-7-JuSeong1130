@@ -161,12 +161,3 @@ name,buy,get,start_date,end_date
 ### Command(Enum)
 - [x] Command 찾는 기능
 - [x] Y인지 N인지 판단하는 기능
-
-
-## 고민
-
-
-## 리뷰하면서 집중할점
-
-
-## 전주보다 개선된됬지만 더 개선해야할 부분
