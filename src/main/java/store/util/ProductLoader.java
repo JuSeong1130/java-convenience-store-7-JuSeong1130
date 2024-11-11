@@ -35,7 +35,7 @@ public class ProductLoader {
         int price = 0;
         int promotionQuantity = 0;
         int commonQuantity = 0;
-        Promotion promotion = null;
+        Promotion promotion = createDefaultPromotion();
 
         for (String[] values : valuesList) {
             price = Integer.parseInt(values[1]);
@@ -46,7 +46,7 @@ public class ProductLoader {
                 commonQuantity += quantity;
             } else {
                 promotionQuantity += quantity;
-                promotion = promotions.getOrDefault(promotionName, createDefaultPromotion());
+                promotion = promotions.getOrDefault(promotionName, promotions.get(promotionName));
             }
         }
 
